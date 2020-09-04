@@ -10,7 +10,7 @@ namespace HeistII
         {
             get
             {
-                return AlarmScore < 1 && VaultScore < 1 && SecurityGuardScore < 1;
+                return AlarmScore > 0 || VaultScore > 0 || SecurityGuardScore > 0;
             }
         }
 

@@ -92,6 +92,8 @@ namespace HeistII
             Console.WriteLine("We got us a target.");
             Console.WriteLine($"The most secure asset is the {mostSecure}.");
             Console.WriteLine($"The least secure asset is the {leastSecure}.");
+            Console.WriteLine("\n(Press Enter to Continue)");
+            Console.ReadLine();
 
             // Show the Rolodex and assemble the user's crew
             List<IRobber> crew = new List<IRobber>();
@@ -126,7 +128,7 @@ namespace HeistII
                         break;
                     }
                     bool validAnswer = int.TryParse(crewSelection, out int crewIndex);
-                    if (validAnswer && crewIndex > 0 && crewIndex < rolodex.Count && !crew.Contains(rolodex[crewIndex - 1]))
+                    if (validAnswer && crewIndex > 0 && crewIndex <= rolodex.Count && !crew.Contains(rolodex[crewIndex - 1]))
                     {
                         crew.Add(rolodex[crewIndex - 1]);
                         crewSelected = true;
@@ -136,6 +138,32 @@ namespace HeistII
                         Console.WriteLine("C'mon, we got a bank to rob! Pick someone from the list.");
                     }
                 }
+            }
+
+            Console.Clear();
+            Console.WriteLine("Bank robbin' time!");
+            Console.WriteLine();
+            crew.ForEach(member => member.PerformSkill(targetBank));
+            if (targetBank.IsSecure)
+            {
+                Console.WriteLine("\nThe heist was a failure! The crew was caught!");
+                Console.WriteLine("\nI don't know ya. I never saw ya before. Get outta here!");
+            }
+            else
+            {
+                Console.WriteLine("\nThe crew is back. Looks like the heist was a success!");
+                int totalTake = targetBank.CashOnHand;
+                Console.WriteLine($"\nThe total take was ${totalTake}.");
+                if (totalTake > 500000) Console.WriteLine("Well done!");
+                int yourTake = totalTake;
+                crew.ForEach(member =>
+                {
+                    int memberTake = totalTake * member.PercentageCut / 100;
+                    Console.WriteLine($"{member.Name} gets {member.PercentageCut}%, so he'll have ${memberTake}");
+                    yourTake -= memberTake;
+                });
+
+                Console.WriteLine($"\nThat leaves you with ${yourTake}. Don't spend it all in one place!");
             }
         }
 
@@ -152,7 +180,7 @@ namespace HeistII
                 AlarmScore = new Random().Next(101),
                     VaultScore = new Random().Next(101),
                     SecurityGuardScore = new Random().Next(101),
-                    CashOnHand = new Random().Next(50, 100) * 1000
+                    CashOnHand = new Random().Next(50, 1000) * 1000
             };
         }
         static IRobber CreateNewGoon(string newGuyName)
