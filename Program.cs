@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HeistII
 {
@@ -7,7 +8,6 @@ namespace HeistII
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             List<IRobber> rolodex = new List<IRobber>()
             {
                 new Hacker
@@ -47,6 +47,7 @@ namespace HeistII
                 PercentageCut = 20
                 }
             };
+            Console.Clear();
             Console.WriteLine("The Rolodex");
             Console.WriteLine("-----------");
             Console.WriteLine($"There are {rolodex.Count} unsavory fellas in the Rolodex.");
@@ -55,12 +56,42 @@ namespace HeistII
             string newGuyName = Console.ReadLine();
             while (newGuyName != "")
             {
-                IRobber newGoon = CreateNewGoon();
+                IRobber newGoon = CreateNewGoon(newGuyName);
                 rolodex.Add(newGoon);
+                Console.Clear();
                 Console.WriteLine($"That brings the Rolodex up to {rolodex.Count} distinguished gentlemen.");
                 Console.WriteLine("If ya got another guy, give me a name now. ");
                 newGuyName = Console.ReadLine();
             }
+
+            Bank targetBank = CreateBank();
+            // Store bank properties in an enumerable dictionary to find the highest and lowest values
+            Dictionary<string, int> bankProperties = new Dictionary<string, int>()
+            { { "Vault", targetBank.VaultScore }, { "Security Guard", targetBank.SecurityGuardScore }, { "Alarm", targetBank.AlarmScore }
+            };
+            string mostSecure = "";
+            string leastSecure = "";
+            int mostSecureValue = -1;
+            int leastSecureValue = 101;
+            foreach (KeyValuePair<string, int> property in bankProperties)
+            {
+                if (property.Value > mostSecureValue)
+                {
+                    mostSecureValue = property.Value;
+                    mostSecure = property.Key;
+                }
+                if (property.Value < leastSecureValue)
+                {
+                    leastSecureValue = property.Value;
+                    leastSecure = property.Key;
+                }
+            }
+            Console.Clear();
+            Console.WriteLine("******* The Bank *******");
+            Console.WriteLine();
+            Console.WriteLine("We got us a target.");
+            Console.WriteLine($"The most secure asset is the {mostSecure}.");
+            Console.WriteLine($"The least secure asset is the {leastSecure}.");
         }
 
         static void TitleScreen()
@@ -69,7 +100,17 @@ namespace HeistII
             Console.WriteLine("iRobbing");
         }
 
-        static IRobber CreateNewGoon()
+        static Bank CreateBank()
+        {
+            return new Bank()
+            {
+                AlarmScore = new Random().Next(101),
+                    VaultScore = new Random().Next(101),
+                    SecurityGuardScore = new Random().Next(101),
+                    CashOnHand = new Random().Next(50, 100) * 1000
+            };
+        }
+        static IRobber CreateNewGoon(string newGuyName)
         {
             Console.WriteLine("What kinda goon ya bringin' in?");
             Console.WriteLine(" (H)acker (Disables alarms)");
@@ -116,7 +157,7 @@ namespace HeistII
             Console.WriteLine("And how good is this guy, on a scale from 0-100?  ");
             newGoon.SkillLevel = GetNumber();
 
-            Console.WriteLine($"Alright. And what percentage does the distinguished {newGuyName} want for his 'services'?")
+            Console.WriteLine($"Alright. And what percentage does the distinguished {newGuyName} want for his 'services'?  ");
             newGoon.PercentageCut = GetNumber();
 
             return newGoon;
@@ -144,5 +185,6 @@ namespace HeistII
             return num;
 
         }
+
     }
 }
