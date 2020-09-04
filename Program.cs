@@ -92,6 +92,15 @@ namespace HeistII
             Console.WriteLine("We got us a target.");
             Console.WriteLine($"The most secure asset is the {mostSecure}.");
             Console.WriteLine($"The least secure asset is the {leastSecure}.");
+
+            // Show the Rolodex
+            Console.WriteLine("The Rolodex");
+            Console.WriteLine("-----------");
+            for (int i = 0; i < rolodex.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}) {rolodex[i].Name}: {rolodex[i].GetType().Name}");
+                Console.WriteLine($"Skill level: {rolodex[i].SkillLevel}  Percentage cut: {rolodex[i].PercentageCut}\n");
+            }
         }
 
         static void TitleScreen()
