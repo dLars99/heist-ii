@@ -8,6 +8,6 @@ namespace HeistII
         void PerformSkill(Bank bank)
         {
 
-        };
+        }
     }
 }
