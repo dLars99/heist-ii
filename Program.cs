@@ -93,13 +93,49 @@ namespace HeistII
             Console.WriteLine($"The most secure asset is the {mostSecure}.");
             Console.WriteLine($"The least secure asset is the {leastSecure}.");
 
-            // Show the Rolodex
-            Console.WriteLine("The Rolodex");
-            Console.WriteLine("-----------");
-            for (int i = 0; i < rolodex.Count; i++)
+            // Show the Rolodex and assemble the user's crew
+            List<IRobber> crew = new List<IRobber>();
+            bool crewComplete = false;
+            while (!crewComplete)
             {
-                Console.WriteLine($"{i + 1}) {rolodex[i].Name}: {rolodex[i].GetType().Name}");
-                Console.WriteLine($"Skill level: {rolodex[i].SkillLevel}  Percentage cut: {rolodex[i].PercentageCut}\n");
+                Console.Clear();
+                Console.WriteLine("The Rolodex");
+                Console.WriteLine("-----------");
+                for (int i = 0; i <= rolodex.Count; i++)
+                {
+                    // Show member only if they have not yet been selected and won't take too high of a PercentageCut
+                    int totalPercentage = crew.Sum(robber => robber.PercentageCut);
+                    if (i < rolodex.Count && !crew.Contains(rolodex[i]) && totalPercentage + rolodex[i].PercentageCut < 101)
+                    {
+                        Console.WriteLine($"{i + 1}) {rolodex[i].Name}: {rolodex[i].GetType().Name}");
+                        Console.WriteLine($"Skill level: {rolodex[i].SkillLevel}  Percentage cut: {rolodex[i].PercentageCut}\n");
+                    }
+                    else if (i == rolodex.Count)
+                    {
+                        // Display exit option
+                        Console.WriteLine($"Enter a number to add a crew member or hit Enter to finish crew selection");
+                    }
+                }
+                bool crewSelected = false;
+                while (!crewSelected)
+                {
+                    string crewSelection = Console.ReadLine();
+                    if (crewSelection == "")
+                    {
+                        crewComplete = true;
+                        break;
+                    }
+                    bool validAnswer = int.TryParse(crewSelection, out int crewIndex);
+                    if (validAnswer && crewIndex > 0 && crewIndex < rolodex.Count && !crew.Contains(rolodex[crewIndex - 1]))
+                    {
+                        crew.Add(rolodex[crewIndex - 1]);
+                        crewSelected = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("C'mon, we got a bank to rob! Pick someone from the list.");
+                    }
+                }
             }
         }
 
